@@ -7,4 +7,10 @@
         app:showAsAction="always"
         android:icon="@drawable/ic_search"
         android:title="@string/search_messages" />
+    <item android:id="@+id/NewGroup"
+        android:title="New Group" />
+    <item android:id="@+id/StarMsg"
+        android:title="Starred Messages" />
+    <item android:id="@+id/Settings"
+        android:title="Settings" />
 </menu>
