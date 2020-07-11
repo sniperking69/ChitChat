@@ -1,4 +1,4 @@
-package com.aputech.chitchat
+package com.aputech.chitchat.Adapters
 
 import android.content.Context
 import android.content.Intent

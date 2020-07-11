@@ -2,21 +2,17 @@ package com.aputech.chitchat
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.material.tabs.TabLayout
-import androidx.viewpager.widget.ViewPager
 import androidx.appcompat.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
 import android.widget.LinearLayout
-import android.widget.TableLayout
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
-import androidx.core.view.get
 import androidx.viewpager2.widget.ViewPager2
+import com.aputech.chitchat.Adapters.MyAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 
 class MainActivity : AppCompatActivity() {
@@ -34,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.setPageTransformer(ZoomOutPageTransformer())
         // The pager adapter, which provides the pages to the view pager widget.
-        val pagerAdapter = MyAdapter(this,this,4)
+        val pagerAdapter = MyAdapter(this, this, 4)
         viewPager.adapter = pagerAdapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
