@@ -18,7 +18,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 class MainActivity : AppCompatActivity() {
     private lateinit var viewPager : ViewPager2
     private lateinit var tabLayout : TabLayout
-    private val tabTitles= arrayOf("","CHATS","STATUS","CALLS")
+    private val tabTitles= arrayOf("","CHATS","STATUS","CALLS","WORLD")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
 
         viewPager.setPageTransformer(ZoomOutPageTransformer())
         // The pager adapter, which provides the pages to the view pager widget.
-        val pagerAdapter = MyAdapter(this, this, 4)
+        val pagerAdapter = MyAdapter(this, this, 5)
         viewPager.adapter = pagerAdapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

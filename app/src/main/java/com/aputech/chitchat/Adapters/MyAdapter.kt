@@ -11,6 +11,7 @@ import com.aputech.chitchat.FragmentsUI.Calls
 import com.aputech.chitchat.FragmentsUI.Camera
 import com.aputech.chitchat.FragmentsUI.Inbox
 import com.aputech.chitchat.FragmentsUI.Status
+import com.aputech.chitchat.World
 
 class MyAdapter(private val mContext: Context, fa:FragmentActivity, internal var numTabs:Int) :FragmentStateAdapter(fa) {
     override fun getItemCount(): Int {
@@ -31,7 +32,7 @@ class MyAdapter(private val mContext: Context, fa:FragmentActivity, internal var
             3->{
                 return Calls()
             }
-            else -> Inbox()
+            else -> World()
         }
     }
 

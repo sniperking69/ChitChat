@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.provider.Settings
+import android.util.Log
 import android.widget.Toast
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -17,20 +18,22 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlin.math.log
 
 class SplashScreen : AppCompatActivity() {
     private var RC_SIGN_IN=567
+    private var
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         FirebaseApp.initializeApp(this)
-        val providers = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build())
-        startActivityForResult(
-            AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .build(),
-            RC_SIGN_IN)
+        val instance = Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "AppDatabase"
+        ).build()
+        SignIn(this,"",instance)
+
 
     }
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -42,29 +45,49 @@ class SplashScreen : AppCompatActivity() {
                 //Sign in Successful
                 val userid = FirebaseAuth.getInstance().currentUser
                 val user:User= User(userid.toString(),0,null)
-             //   databaseWork(user,this)
-                StartNewActivity()
+                databaseWork(user,this,instance)
+                StartNewActivity(this)
 
             } else {
                 // Sign in failed. If response is null the user canceled the
-                // sign-in flow using the back button. Otherwise check
-                // response.getError().getErrorCode() and handle the error.
                 Toast.makeText(this,"Did Not Complete Sign in",Toast.LENGTH_LONG).show()
                 finish()
             }
         }
     }
-    fun StartNewActivity(){
+    fun StartNewActivity(mContext:Context){
         Handler(Looper.myLooper()!!).postDelayed(Runnable {
-            val In = Intent(this,MainActivity::class.java)
+            val In = Intent(mContext,MainActivity::class.java)
             startActivity(In)
-        },3000)
+            finish()
+        },1000)
 
     }
-    fun databaseWork(user:User,mContext:Context){
+    fun databaseWork(user:User,mContext:Context,instance: AppDatabase){
         GlobalScope.launch {
-            AppDatabase.getDatabase(mContext).userDao().insertAll(user)
-        }
 
+            instance.userDao().insertAll(user)
+        }
     }
+    fun SignIn(mContext:Context,uid:String,instance: AppDatabase){
+        GlobalScope.launch {
+
+            val user= instance.userDao().loadId(uid)
+            if(user==null){
+                StartNewActivity(mContext)
+            }else{
+                val providers = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build())
+            startActivityForResult(
+                AuthUI.getInstance()
+                    .createSignInIntentBuilder()
+                    .setAvailableProviders(providers)
+                    .build(),
+                RC_SIGN_IN)
+
+            }
+
+
+        }
+    }
+
 }
