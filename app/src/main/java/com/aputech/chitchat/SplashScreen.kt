@@ -16,23 +16,25 @@ import com.firebase.ui.auth.AuthUI
 import com.firebase.ui.auth.IdpResponse
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.math.log
 
 class SplashScreen : AppCompatActivity() {
     private var RC_SIGN_IN=567
-    private var
+    private lateinit var instance:AppDatabase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_splash_screen)
         FirebaseApp.initializeApp(this)
-        val instance = Room.databaseBuilder(
+        instance = Room.databaseBuilder(
             applicationContext,
             AppDatabase::class.java,
             "AppDatabase"
         ).build()
-        SignIn(this,"",instance)
+        SignIn(this,FirebaseAuth.getInstance().uid,instance)
 
 
     }
@@ -44,8 +46,8 @@ class SplashScreen : AppCompatActivity() {
             if (resultCode == Activity.RESULT_OK) {
                 //Sign in Successful
                 val userid = FirebaseAuth.getInstance().currentUser
-                val user:User= User(userid.toString(),0,null)
-                databaseWork(user,this,instance)
+                //val user:User= User(userid.toString(),0,null)
+               // databaseWork(user,this,instance)
                 StartNewActivity(this)
 
             } else {
@@ -56,11 +58,14 @@ class SplashScreen : AppCompatActivity() {
         }
     }
     fun StartNewActivity(mContext:Context){
-        Handler(Looper.myLooper()!!).postDelayed(Runnable {
+        GlobalScope.launch(context = Dispatchers.Main) {
+            println("launched coroutine 1")
+            delay(1000)
             val In = Intent(mContext,MainActivity::class.java)
             startActivity(In)
             finish()
-        },1000)
+        }
+
 
     }
     fun databaseWork(user:User,mContext:Context,instance: AppDatabase){
@@ -69,11 +74,12 @@ class SplashScreen : AppCompatActivity() {
             instance.userDao().insertAll(user)
         }
     }
-    fun SignIn(mContext:Context,uid:String,instance: AppDatabase){
-        GlobalScope.launch {
+    fun SignIn(mContext:Context,uid:String?,instance: AppDatabase){
 
-            val user= instance.userDao().loadId(uid)
-            if(user==null){
+        GlobalScope.launch {
+//            val user= instance.userDao().loadId(uid)
+//            Log.d("hello", "SignIn: "+user)
+            if(uid!=null){
                 StartNewActivity(mContext)
             }else{
                 val providers = arrayListOf(AuthUI.IdpConfig.PhoneBuilder().build())
